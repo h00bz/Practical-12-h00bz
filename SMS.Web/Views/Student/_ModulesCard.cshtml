@@ -1,0 +1,38 @@
+﻿<div class="d-flex align-items-center justify-content-between">
+    <h4>Modules</h4>
+
+    <!-- navigation link to ModuleAdd action, passing correct route parameter -->                
+    <a asp-condition=@(User.HasOneOfRoles("admin")) asp-action="ModuleAdd" asp-route-id=@Model.Id 
+        class="btn btn-sm  btn-light" aria-label="add module">
+        <i class="bi bi-file-plus-fill"></i>
+        <span class="ms-1 d-none d-md-inline">Add Module</span>
+    </a>
+
+</div>
+
+<div class="d-flex flex-wrap justify-content-xl-center gap-2 mt-2">
+    @foreach (var sm in Model.StudentModules)
+    {
+        <div class="card">
+            <div class="card-body py-1 px-2 bg-light">
+                <div class="d-flex align-items-center justify-content-between">
+
+                    <h5 class="card-title">@sm.Module.Title 
+                        <span class="badge bg-info text-white p-1">@sm.Mark</span>                
+                    </h5>
+                    
+                    <div class="d-flex gap-0">
+                        <a asp-action="ModuleUpdate" asp-route-id="@sm.Id" class="btn btn-link">
+                            <i class="bi bi-pencil-square" title="update module"></i>                          
+                        </a>
+
+                        <form asp-action="ModuleRemove" asp-route-id="@sm.Id" asp-condition=@(User.HasOneOfRoles("admin"))>
+                            <button class="btn btn-link text-danger"><i class="bi bi-trash-fill" title="remove module"></i></button>
+                        </form> 
+                       
+                    </div> 
+                </div>
+            </div>
+        </div>
+    }
+</div>

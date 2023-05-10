@@ -1,0 +1,105 @@
+<partial name="_Breadcrumbs" model=@(new [] { 
+   ("/", "Home"), 
+   ("/ticket", "Tickets"), 
+   ("","Index") 
+})/>
+
+<div class="card rounded shadow p-4">    
+    <h3>Search Tickets</h3>
+
+    <div class="d-flex flex-row align-items-center">
+        <div class="form-check me-3">
+            <input class="form-check-input" name="range" type="radio" value="@TicketRange.ALL" checked>
+            <label class="form-check-label" for="Range">All</label>
+        </div>
+        <div class="form-check me-3">
+            <input class="form-check-input" name="range" type="radio"  value="@TicketRange.CLOSED">
+            <label class="form-check-label" for="Range">Closed</label>
+        </div>
+        <div class="form-check me-3">
+            <input class="form-check-input" name="range" type="radio" value="@TicketRange.OPEN" >
+            <label class="form-check-label" for="Range">Open</label>
+        </div>
+
+        <input class="form-control me-2" id="query" placeholder="Search.." onkeypress="handle(event)">
+        <button class="btn btn-outline-success my-2 my-sm-0" onclick="search()">Search</button>
+    </div>
+
+    <table class="table mt-3">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Student</th>        
+            <th>Created</th> 
+            <th>Issue</th> 
+            <th>Active</th>
+        </tr>
+        </thead>
+
+        <tbody id="table_body">
+        </tbody>
+    </table> 
+   
+    <span id="count" class="badge rounded-pill bg-primary"></span>
+    
+</div>
+
+
+<script>
+@* function search() {
+    const q = document.getElementById("query").value
+    const r = document.querySelector('input[name="range"]:checked').value
+    fetch(`/api/ticket/search?query=${q}&range=${r}`)
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById("table_body");
+                tableBody.innerHTML = '';         
+                data.forEach(ticket => {                   
+                    tableBody.appendChild(createRowWithInnerHtml(ticket));
+                })
+            });
+} *@
+
+function handle(event) {
+    if (event.key === "Enter") {
+        search()
+    }
+}
+
+async function search() {
+    const query = document.getElementById('query').value
+    const range = document.querySelector('input[name="range"]:checked').value
+
+    // perform fetch query
+    const response = await fetch(`/api/ticket/search?query=${query}&range=${range}`)
+    const data = await response.json()
+
+    // update DOM   
+    const count = document.getElementById('count')
+    count.innerText = `${data.length} tickets found`;
+
+    const tableBody = document.getElementById("table_body");
+    tableBody.innerHTML = '';         
+    data.forEach(ticket => {                   
+        tableBody.appendChild(createRowWithInnerHtml(ticket));
+    })
+}
+
+function createRowWithInnerHtml(ticket) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+        <td>${ticket.id}</td>
+        <td>${ticket.student}</td>
+        <td>
+            ${new Date(ticket.createdOn).toLocaleString()}
+        </td>   
+        <td>${ticket.issue}</td> 
+        <td>
+            ${ticket.active ? 
+              "<i class='bi bi-toggle-on'></i>" : 
+              "<i class='bi bi-toggle-off'></i>" }
+        </td> `
+    return tr;
+}
+
+</script>

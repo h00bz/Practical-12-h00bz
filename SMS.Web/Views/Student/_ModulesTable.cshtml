@@ -1,0 +1,47 @@
+﻿<div class="d-flex align-items-center justify-content-between">
+    <h4>Modules</h4>
+
+    <!-- navigation link to ModuleAdd action, passing correct route parameter -->                
+    <a asp-condition=@(User.HasOneOfRoles("admin")) asp-action="ModuleAdd" asp-route-id=@Model.Id 
+        class="btn btn-sm  btn-light" aria-label="add module">
+        <i class="bi bi-file-plus-fill"></i>
+        <span class="ms-1 d-none d-md-inline">Add Module</span>
+    </a>
+
+</div>
+
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th class="w-50">Module</th>
+            <th class="w-25">Grade</th>
+            <th>Actions</th>             
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var sm in Model.StudentModules)
+        {
+            <tr>
+                <!-- Module.Title is accessible as we included studentmodules and each related module in service -->
+                <td>@sm.Module.Title</td>
+                <td>@sm.Mark</td> 
+                <td> 
+                    <div class="d-inline-flex">
+                        <form asp-action="ModuleRemove" asp-route-id="@sm.Id" asp-condition=@(User.HasOneOfRoles("admin"))>
+                             <button class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash-fill" title="remove module"></i>                              
+                                <span class="ms-1 d-none d-md-inline">Remove</span>   
+                            </button>
+                        </form> 
+
+                        <a asp-action="ModuleUpdate" asp-route-id="@sm.Id" class="ms-2 btn btn-sm btn-outline-dark">
+                            <i class="bi bi-pencil-square" title="update module"></i>
+                            <span class="ms-1 d-none d-md-inline">Update</span>  
+                        </a>
+    
+                    </div>           
+                </td>  
+            </tr>
+        }
+    </tbody>
+</table>
